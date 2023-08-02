@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Limbo by brooklyn8218</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://rolbets.com/img/misc/background-limbo.png'); /* Novo background */
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            background-color: #241d41;
+        }
+
+        .container {
+            max-width: 590px; /* Largura máxima */
+            padding: 30px;
+            height: 657px; /* Altura */
+            width: 592px; /* Largura */
+            border-radius: 10px;
+            /*box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);*/
+            /*background-color: #1a191e; /* Cor cinza escuro (#1a191e) */
+            text-align: center;
+            position: relative; /* Necessário para posicionar o foguete e a fumaça */
+            /*background-image: url(''); /* Imagem de fundo */
+            /*background-size: cover; /* Redimensionar a imagem de fundo */
+            background-repeat: no-repeat; /* Evitar repetição da imagem de fundo */
+        }
+
+        #bot-image {
+            max-width: 215px; /* Tamanho do foguete (imagem) */
+            position: relative; /* Necessário para posicionar a fumaça em relação ao foguete */
+            z-index: 1; /* Coloca o foguete acima da fumaça */
+            transition: transform 0.5s ease; /* Adiciona uma transição para a animação de decolagem */
+        }
+
+        #smokeCanvas {
+            width: 300px; /* Tamanho do canvas (fumaça) */
+            height: 300px; /* Tamanho do canvas (fumaça) */
+            position: absolute;
+            top: calc(100% - 30px); /* Posiciona a fumaça abaixo do foguete */
+            left: 50%;
+            transform: translateX(-50%); /* Centraliza horizontalmente */
+            z-index: 0; /* Coloca a fumaça abaixo do foguete e do conteúdo do container */
+            pointer-events: none; /* Permite clicar através do canvas */
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff1f35;
+            box-shadow: #ff1f35 0px 0px 10px, #ff1f35 0px 1px 0px inset, #ff1f35 0px -3px 0px inset, #ff1f35 0px 0px 15px inset;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 242px;
+            height: 59px;
+            font-weight: bold;
+            font-size: 25px;
+        }
+        button:hover {
+            transform: scale(1.2);
+            box-shadow: #ff1f35 0px 0px 10px, #ff1f35 0px 1px 0px inset, #ff1f35 0px -3px 0px inset, #ff1f35 0px 0px 15px inset;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 18px;
+            color: black; /* Cor padrão do texto */
+        }
+
+        #random-entry {
+            font-size: 4.6875rem;
+            font-style: italic;
+            font-weight: 800;
+            font-family: "Montserrat", sans-serif; /* Estilo aplicado ao número gerado */
+            color: black; /* Cor padrão do número */
+            transition: color 0.3s ease; /* Adiciona uma transição para a cor do número */
+        }
+
+        #random-entry.above-2 {
+            color: #28a745; /* Cor verde para números acima de 2 */
+        }
+
+        #random-entry.below-2 {
+            color: #dc3545; /* Cor vermelha para números abaixo de 2 */
+        }
+
+        h1 {
+            color: white; /* Cor do título */
+        }
+
+        /* Adiciona o efeito de explosão no número gerado */
+        .explode {
+            animation: explode 0.5s ease;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                height: 832px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://rolbets.com/img/misc/rocket.png" alt="Foguete" id="bot-image">
+        <h1>Possível entrada</h1>
+        <div class="result-container">
+            <span id="random-entry"></span>
+            <button id="generate-btn" onclick="generateRandomEntry()">Gerar Entrada</button>
+        </div>
+        <canvas id="smokeCanvas"></canvas> <!-- Canvas para a fumaça -->
+    </div>
+
+    <script>
+        const canvas = document.getElementById('smokeCanvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 300; // Tamanho do canvas (fumaça)
+        canvas.height = 300; // Tamanho do canvas (fumaça)
+
+        function generateRandomEntry() {
+            const randomEntry = (Math.random() * 2 + 1).toFixed(2);
+            const resultParagraph = document.getElementById('random-entry');
+
+            // Animação de explosão
+            resultParagraph.classList.add('explode');
+            setTimeout(() => {
+                resultParagraph.classList.remove('explode');
+            }, 500);
+
+            // Atualiza o número gerado
+            resultParagraph.textContent = randomEntry;
+
+            // Altera a cor do número com base no resultado
+            if (randomEntry < 2) {
+                resultParagraph.classList.remove('above-2');
+                resultParagraph.classList.add('below-2'); // Adiciona a classe 'below-2' para a cor vermelha
+            } else {
+                resultParagraph.classList.remove('below-2');
+                resultParagraph.classList.add('above-2'); // Adiciona a classe 'above-2' para a cor verde
+            }
+
+            // Efeito de decolagem do foguete (mantido conforme solicitado)
+            const botImage = document.getElementById('bot-image');
+            botImage.style.transform = 'translateY(-100px)';
+            setTimeout(() => {
+                botImage.style.transform = 'translateY(0)';
+            }, 500); // Tempo da animação (0.5 segundos)
+        }
+
+        function drawSmoke() {
+            const smokeParticles = [];
+
+            function Particle(x, y, size) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * -3 - 1;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.02 + 0.005;
+            }
+
+            Particle.prototype.update = function () {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            };
+
+            function createParticles() {
+                const x = canvas.width / 2;
+                const y = canvas.height - 30;
+
+                for (let i = 0; i < 30; i++) {
+                    smokeParticles.push(new Particle(x, y, Math.random() * 5 + 5));
+                }
+            }
+
+            function animateParticles() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                smokeParticles.forEach((particle) => {
+                    particle.update();
+                    context.beginPath();
+                    context.arc(
+                        particle.x,
+                        particle.y,
+                        particle.size,
+                        0,
+                        Math.PI * 2,
+                        false
+                    );
+                    context.fillStyle = `rgba(255, 255, 255, ${particle.alpha})`;
+                    context.fill();
+                });
+
+                smokeParticles = smokeParticles.filter(
+                    (particle) => particle.alpha > 0
+                );
+
+                requestAnimationFrame(animateParticles);
+            }
+
+            createParticles();
+            animateParticles();
+        }
+
+        drawSmoke();
+    </script>
+</body>
+
+</html>
